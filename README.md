@@ -64,16 +64,68 @@ Pinia Store에서 응답 가공
 
 ## 기술 스택
 
-| 구분 | 기술 | 사용 목적 |
-| --- | --- | --- |
-| Frontend | Vue 3 | Composition API 기반 UI 구성 |
-| Build | Vite | 개발 서버 및 프로덕션 빌드 |
-| State | Pinia | 날씨 상태, 비동기 요청 및 예보 캐시 관리 |
-| Routing | Vue Router | Home, Travel, About 페이지 구성 |
-| HTTP | Axios | OpenWeatherMap API 통신 |
-| UI | Element Plus | 검색 입력 등 공통 UI 요소 |
-| Map | SVG | 대한민국·도·도시 윤곽선과 상호작용 구현 |
-| Quality | ESLint, Oxlint, Prettier | 코드 검사 및 포맷 정리 |
+| 구분     | 기술                     | 사용 목적                                |
+| -------- | ------------------------ | ---------------------------------------- |
+| Frontend | Vue 3                    | Composition API 기반 UI 구성             |
+| Build    | Vite                     | 개발 서버 및 프로덕션 빌드               |
+| State    | Pinia                    | 날씨 상태, 비동기 요청 및 예보 캐시 관리 |
+| Routing  | Vue Router               | Home, Travel, About 페이지 구성          |
+| HTTP     | Axios                    | OpenWeatherMap API 통신                  |
+| UI       | Element Plus             | 검색 입력 등 공통 UI 요소                |
+| Map      | SVG                      | 대한민국·도·도시 윤곽선과 상호작용 구현  |
+| Quality  | ESLint, Oxlint, Prettier | 코드 검사 및 포맷 정리                   |
+
+## 외부 라이브러리 적용 상세
+
+### 애플리케이션 실행 시 사용하는 라이브러리
+
+#### Vue 3
+
+- **적용 위치:** `src/main.js`, `src/views/**/*.vue`, `src/components/**/*.vue`, `src/stores/*.js`
+- **적용 방식:** `createApp`으로 애플리케이션을 생성하고, 각 Vue 파일에서는 Composition API의 `ref`, `computed`, `watch`, `onMounted`, `onBeforeUnmount` 등을 사용합니다.
+- **주요 역할:** 날씨 데이터에 따라 화면을 갱신하고, 도시 선택·날짜 및 시간 입력·지도 후버 같은 사용자 상호작용을 반응형 상태로 처리합니다.
+
+#### Pinia
+
+- **초기화 위치:** `src/main.js`에서 `createPinia()`를 생성해 Vue 애플리케이션에 등록합니다.
+- **Store 적용 위치:** `src/stores/weather.js`, `src/stores/tripWeather.js`
+- **컴포넌트 연결 위치:** `src/views/WeatherHomeView.vue`, `src/views/WeatherTripView.vue`, `src/components/AppHeader.vue`
+- **적용 방식:** `defineStore`의 Setup Store 문법으로 상태와 액션을 구성합니다. `weather` Store는 현재 날씨, 검색, 위치 기반 조회와 24시간 예보를 관리하고, `tripWeather` Store는 도시별 5일 예보 캐시와 출발·도착 날씨 비교를 관리합니다. 컴포넌트에서는 `storeToRefs`를 사용해 Store의 반응성을 유지한 채 상태를 구조 분해합니다.
+
+#### Vue Router
+
+- **라우터 설정:** `src/router/index.js`
+- **등록 위치:** `src/main.js`
+- **사용 위치:** `src/App.vue`, `src/components/AppHeader.vue`, `src/views/WeatherAboutView.vue`, `src/views/NotFoundView.vue`
+- **적용 방식:** `createRouter`와 `createWebHistory`로 History 모드 라우터를 구성합니다. `RouterView`에 현재 페이지를 표시하고 `RouterLink`로 Home·Travel·About 페이지를 이동합니다. 현재 위치 조회 후에는 `useRouter().push('/')`로 홈 화면으로 이동합니다.
+
+#### Axios
+
+- **API 클라이언트 적용 위치:** `src/api/weatherApi.js`
+- **오류 판별 적용 위치:** `src/stores/weather.js`
+- **적용 방식:** `axios.create`로 OpenWeatherMap 전용 인스턴스를 만들고 Base URL, 10초 타임아웃, API Key, 섭씨 단위(`metric`), 한국어 응답(`kr`)을 공통 설정합니다.
+- **호출 API:** `/data/2.5/weather`에서 현재 날씨, `/data/2.5/forecast`에서 5일·3시간 예보, `/geo/1.0/direct`에서 국내 도시 검색 결과를 가져옵니다. Store에서는 `axios.isAxiosError`로 API 오류와 일반 오류를 구분합니다.
+
+#### Element Plus
+
+- **전역 등록 위치:** `src/main.js`
+- **실제 컴포넌트 사용 위치:** `src/components/SearchBar.vue`
+- **적용 방식:** `ElementPlus` 플러그인과 기본 CSS를 전역 등록하고, 도시 검색창에 `el-input`을 사용합니다. 입력값 바인딩, Enter 키 검색, 지우기 기능과 크기·접근성 속성을 Element Plus 입력 컴포넌트로 처리합니다.
+
+### 개발·빌드 단계에서 사용하는 라이브러리
+
+| 라이브러리 | 적용 위치 | 적용 내용 |
+| ---------- | --------- | --------- |
+| Vite | `vite.config.js`, `package.json` | 개발 서버, 프로덕션 빌드 및 빌드 결과 미리보기를 담당하며 `@`를 `src`로 연결하는 경로 별칭을 설정합니다. |
+| `@vitejs/plugin-vue` | `vite.config.js` | Vue 단일 파일 컴포넌트(`.vue`)를 Vite에서 변환할 수 있도록 합니다. |
+| `vite-plugin-vue-devtools` | `vite.config.js` | 개발 중 Vue 컴포넌트와 반응형 상태를 확인할 수 있는 Vue DevTools 연동을 추가합니다. |
+| ESLint · `@eslint/js` · `eslint-plugin-vue` | `eslint.config.js` | JavaScript 권장 규칙과 Vue 필수 규칙을 적용해 코드 오류와 잘못된 Vue 문법을 검사합니다. |
+| Oxlint · `eslint-plugin-oxlint` | `.oxlintrc.json`, `eslint.config.js`, `package.json` | 빠른 정적 검사를 실행하고, Oxlint가 맡는 규칙을 ESLint 설정과 조율합니다. |
+| Prettier · `eslint-config-prettier` | `eslint.config.js`, `package.json` | `src` 내부 코드 형식을 통일하고 ESLint의 포맷 관련 규칙 충돌을 방지합니다. |
+| `globals` | `eslint.config.js` | `window`, `document` 등 브라우저 전역 변수를 ESLint가 올바르게 인식하도록 합니다. |
+| `npm-run-all2` | `package.json` | `npm run lint` 실행 시 `lint:oxlint`와 `lint:eslint` 스크립트를 순서대로 실행합니다. |
+
+> 대한민국 지도는 별도 지도 라이브러리를 사용하지 않습니다. `src/data/`의 SVG 경로 데이터와 `src/components/trip/KoreaCityMap.vue`의 Vue 이벤트 처리로 직접 구현했습니다. 브라우저 위치 조회도 외부 패키지 대신 Web Geolocation API를 사용합니다.
 
 ## 프로젝트 구조
 
@@ -174,7 +226,7 @@ VITE_OPENWEATHER_BASE_URL=https://api.openweathermap.org
 
 `VITE_OPENWEATHER_BASE_URL`은 생략할 수 있으며, 생략하면 위 주소를 기본값으로 사용합니다.
 
-API Key는 [OpenWeatherMap](https://openweathermap.org/api)에서 발급할 수 있습니다. `.env.local`에는 민감한 값이 포함되므로 Git에 커밋하지 마세요.
+API Key는 [OpenWeatherMap](https://openweathermap.org/api)에서 발급할 수 있습니다.
 
 ### 개발 서버 실행
 
@@ -192,29 +244,21 @@ npm run build
 
 빌드 결과는 `dist/` 디렉터리에 생성됩니다.
 
-### 빌드 결과 미리보기
+### eslint 검사
 
 ```bash
-npm run preview
+npm run lint
 ```
 
-## 명령어
-
-| 명령어 | 설명 |
-| --- | --- |
-| `npm run dev` | 외부 접속을 허용한 Vite 개발 서버 실행 |
-| `npm run build` | 프로덕션 빌드 생성 |
-| `npm run preview` | 프로덕션 빌드 로컬 미리보기 |
-| `npm run lint` | Oxlint와 ESLint 검사 및 자동 수정 |
-| `npm run format` | `src/` 디렉터리 Prettier 포맷 적용 |
+eslint.config.js에 있는 규칙을 기준으로 검사합니다.
 
 ## 페이지
 
-| 경로 | 설명 |
-| --- | --- |
-| `/` | 주요 도시 및 현재 위치 날씨, 24시간 예보 |
-| `/trip` | 출발·도착 도시 선택과 날씨 비교 |
-| `/about` | 온도착의 주요 기능과 데이터 안내 |
+| 경로     | 설명                                     |
+| -------- | ---------------------------------------- |
+| `/`      | 주요 도시 및 현재 위치 날씨, 24시간 예보 |
+| `/trip`  | 출발·도착 도시 선택과 날씨 비교          |
+| `/about` | 온도착의 주요 기능과 데이터 안내         |
 
 ## API 안내
 
@@ -225,7 +269,7 @@ npm run preview
 
 브라우저의 현재 위치 기능은 Geolocation API를 사용합니다. 위치 권한이 거부되거나 HTTPS 또는 로컬 환경이 아닌 경우 현재 위치 조회가 제한될 수 있습니다.
 
-## 구현 과정에서 해결한 문제
+## 트러블 슈팅
 
 ### 밀집된 도시 마커
 
@@ -242,24 +286,6 @@ npm run preview
 ### 출발지와 도착지의 직접 비교
 
 도시별 날씨를 서로 분리된 카드로 나열하면 차이를 파악하기 어려웠습니다. 두 도시를 하나의 비교 컴포넌트에 배치하고 기온·체감온도·강수확률의 변화량과 준비 코멘트를 함께 표시했습니다.
-
-## 현재 제한사항
-
-- OpenWeatherMap 무료 Forecast 범위에 따라 약 5일 이내의 예보만 비교할 수 있습니다.
-- 예보가 3시간 간격이므로 사용자가 고른 정각과 정확히 일치하지 않을 수 있습니다.
-- 예보 캐시는 메모리에만 저장되어 새로고침하면 초기화됩니다.
-- 현재 여행 지도와 도시 목록은 대한민국 주요 도시를 중심으로 구성되어 있습니다.
-- 날씨 예보는 실제 관측 결과와 차이가 있을 수 있습니다.
-
-## 개선 아이디어
-
-- 도시별 예보 캐시에 만료 시간(TTL) 적용
-- 출발지와 도착지 사이의 실제 이동 시간 연동
-- 기차·버스·항공 이동 수단별 도착 시간 계산
-- 여러 날짜의 여행 일정과 경유지 지원
-- 온도 변화 차트 및 모바일 지도 조작 개선
-- 지도와 대용량 SVG 데이터를 별도 청크로 분리
-- 단위 테스트와 컴포넌트 테스트 추가
 
 ## 라이선스 및 데이터
 
