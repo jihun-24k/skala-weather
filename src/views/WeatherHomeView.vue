@@ -50,19 +50,12 @@ const searchCity = () => {
 
         <div class="summary-row">
           <span>전국 주요 도시</span>
-          <span
-            >평균 기온 <b>{{ averageTemp.toFixed(1) }}°</b></span
-          >
+          <span>평균 기온 <b>{{ averageTemp.toFixed(1) }}°</b></span>
         </div>
 
         <div v-if="filteredWeatherList.length" class="city-grid">
-          <WeatherCard
-            v-for="weather in filteredWeatherList"
-            :key="weather.id"
-            :weather="weather"
-            :selected="selectedCityInfo.id === weather.id"
-            @select="showDetail(weather)"
-          />
+          <WeatherCard v-for="weather in filteredWeatherList" :key="weather.id" :weather="weather"
+            :selected="selectedCityInfo.id === weather.id" @select="showDetail(weather)" />
         </div>
 
         <div v-else class="empty-state">
@@ -139,7 +132,7 @@ const searchCity = () => {
   border-radius: 20px;
 }
 
-.empty-state > span {
+.empty-state>span {
   font-size: 45px;
 }
 

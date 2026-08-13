@@ -100,6 +100,10 @@ export const useWeatherStore = defineStore('weather', () => {
         }
     }
 
+    const selectCity = (weather) => {
+        selectedCityInfo.value = weather
+    }
+
     const fetchWeatherList = async () => {
         isLoading.value = true
         error.value = null
@@ -107,7 +111,7 @@ export const useWeatherStore = defineStore('weather', () => {
         try {
             weatherList.value = await Promise.all(initialCities.map((city) => fetchCityWeather(city)))
 
-            selectedCityInfo.value = weatherList.value[0]
+            selectCity(weatherList.value[0])
         } catch (requestError) {
             error.value = getRequestErrorMessage(requestError)
         } finally {
@@ -160,5 +164,6 @@ export const useWeatherStore = defineStore('weather', () => {
         filteredWeatherList,
         averageTemp,
         fetchWeatherList,
+        selectCity,
     }
 })
