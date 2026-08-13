@@ -79,12 +79,6 @@ Pinia Store에서 응답 가공
 
 ### 애플리케이션 실행 시 사용하는 라이브러리
 
-#### Vue 3
-
-- **적용 위치:** `src/main.js`, `src/views/**/*.vue`, `src/components/**/*.vue`, `src/stores/*.js`
-- **적용 방식:** `createApp`으로 애플리케이션을 생성하고, 각 Vue 파일에서는 Composition API의 `ref`, `computed`, `watch`, `onMounted`, `onBeforeUnmount` 등을 사용합니다.
-- **주요 역할:** 날씨 데이터에 따라 화면을 갱신하고, 도시 선택·날짜 및 시간 입력·지도 후버 같은 사용자 상호작용을 반응형 상태로 처리합니다.
-
 #### Pinia
 
 - **초기화 위치:** `src/main.js`에서 `createPinia()`를 생성해 Vue 애플리케이션에 등록합니다.
@@ -111,19 +105,6 @@ Pinia Store에서 응답 가공
 - **전역 등록 위치:** `src/main.js`
 - **실제 컴포넌트 사용 위치:** `src/components/SearchBar.vue`
 - **적용 방식:** `ElementPlus` 플러그인과 기본 CSS를 전역 등록하고, 도시 검색창에 `el-input`을 사용합니다. 입력값 바인딩, Enter 키 검색, 지우기 기능과 크기·접근성 속성을 Element Plus 입력 컴포넌트로 처리합니다.
-
-### 개발·빌드 단계에서 사용하는 라이브러리
-
-| 라이브러리 | 적용 위치 | 적용 내용 |
-| ---------- | --------- | --------- |
-| Vite | `vite.config.js`, `package.json` | 개발 서버, 프로덕션 빌드 및 빌드 결과 미리보기를 담당하며 `@`를 `src`로 연결하는 경로 별칭을 설정합니다. |
-| `@vitejs/plugin-vue` | `vite.config.js` | Vue 단일 파일 컴포넌트(`.vue`)를 Vite에서 변환할 수 있도록 합니다. |
-| `vite-plugin-vue-devtools` | `vite.config.js` | 개발 중 Vue 컴포넌트와 반응형 상태를 확인할 수 있는 Vue DevTools 연동을 추가합니다. |
-| ESLint · `@eslint/js` · `eslint-plugin-vue` | `eslint.config.js` | JavaScript 권장 규칙과 Vue 필수 규칙을 적용해 코드 오류와 잘못된 Vue 문법을 검사합니다. |
-| Oxlint · `eslint-plugin-oxlint` | `.oxlintrc.json`, `eslint.config.js`, `package.json` | 빠른 정적 검사를 실행하고, Oxlint가 맡는 규칙을 ESLint 설정과 조율합니다. |
-| Prettier · `eslint-config-prettier` | `eslint.config.js`, `package.json` | `src` 내부 코드 형식을 통일하고 ESLint의 포맷 관련 규칙 충돌을 방지합니다. |
-| `globals` | `eslint.config.js` | `window`, `document` 등 브라우저 전역 변수를 ESLint가 올바르게 인식하도록 합니다. |
-| `npm-run-all2` | `package.json` | `npm run lint` 실행 시 `lint:oxlint`와 `lint:eslint` 스크립트를 순서대로 실행합니다. |
 
 > 대한민국 지도는 별도 지도 라이브러리를 사용하지 않습니다. `src/data/`의 SVG 경로 데이터와 `src/components/trip/KoreaCityMap.vue`의 Vue 이벤트 처리로 직접 구현했습니다. 브라우저 위치 조회도 외부 패키지 대신 Web Geolocation API를 사용합니다.
 
