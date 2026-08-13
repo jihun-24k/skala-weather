@@ -1,16 +1,40 @@
 <script setup>
+import { RouterLink } from 'vue-router'
 import BasePageLayout from '../components/BasePageLayout.vue'
 import BaseSurface from '../components/BaseSurface.vue'
+
+const features = [
+  {
+    icon: '⌕',
+    title: '도시와 현재 위치',
+    description: '도시를 검색하거나 위치 권한을 허용해 지금 있는 곳의 날씨를 바로 확인할 수 있습니다.',
+  },
+  {
+    icon: '🕒',
+    title: '24시간 예보',
+    description: '현재 시점부터 24시간 동안의 기온과 강수확률 변화를 시간 순서로 확인합니다.',
+  },
+  {
+    icon: '🌦️',
+    title: '날씨를 닮은 화면',
+    description: '맑음, 비, 눈과 같은 날씨 상태에 따라 배경과 전체 화면 효과가 달라집니다.',
+  },
+  {
+    icon: '🧳',
+    title: '여행 날씨 비교',
+    description: '출발 도시와 도착 도시를 고르면 각 시각의 날씨 차이와 준비 코멘트를 제공합니다.',
+  },
+]
 </script>
 
 <template>
   <BasePageLayout>
     <section class="hero" aria-labelledby="about-title">
-      <p class="eyebrow">WEATHER FOR EVERY DAY</p>
-      <h1 id="about-title">날씨를 확인하는<br />가장 산뜻한 방법</h1>
+      <p class="eyebrow">WEATHER FOR EVERY MOMENT</p>
+      <h1 id="about-title">오늘의 외출부터<br />다음 여행까지</h1>
       <p class="hero-description">
-        오늘의 날씨는 복잡한 기상 정보를 누구나 빠르게 이해할 수 있도록 정리해 보여주는 날씨
-        대시보드입니다.
+        지금 있는 곳의 날씨를 살펴보고, 다른 도시로 이동했을 때 달라질 날씨까지 한 흐름에서
+        비교하는 날씨 서비스입니다.
       </p>
 
       <div class="weather-visual" aria-hidden="true">
@@ -21,31 +45,33 @@ import BaseSurface from '../components/BaseSurface.vue'
 
     <BaseSurface class="about-content" aria-label="서비스 소개">
       <div class="intro">
-        <p class="section-label">OUR PURPOSE</p>
-        <h2>필요한 날씨만<br />한눈에 확인하세요</h2>
+        <p class="section-label">WHY ONDOCHAK</p>
+        <h2>숫자를 넘어<br />상황을 이해하는 날씨</h2>
         <p>
-          현재 기온부터 습도, 바람, 강수 확률까지 일상에 필요한 정보를 간결하게 제공합니다. 지역별
-          날씨를 비교하고 원하는 도시의 상세 정보를 바로 확인할 수 있습니다.
+          기온, 체감온도, 습도, 바람과 강수확률을 보기 쉽게 정리합니다. 날씨에 따라 달라지는 화면과
+          여행 경로 비교를 통해 어떤 준비가 필요한지도 빠르게 판단할 수 있습니다.
         </p>
       </div>
 
       <div class="feature-grid">
-        <article>
-          <span class="feature-icon" aria-hidden="true">⌕</span>
-          <h3>빠른 지역 검색</h3>
-          <p>도시의 한글 또는 영문 이름으로 원하는 지역을 빠르게 찾을 수 있습니다.</p>
-        </article>
-        <article>
-          <span class="feature-icon" aria-hidden="true">🌡️</span>
-          <h3>간결한 정보</h3>
-          <p>기온과 날씨 상태, 생활에 필요한 주요 기상 지표를 보기 쉽게 정리합니다.</p>
-        </article>
-        <article>
-          <span class="feature-icon" aria-hidden="true">☂️</span>
-          <h3>일상을 위한 안내</h3>
-          <p>외출 전에 확인해야 할 핵심 정보를 직관적인 화면으로 전달합니다.</p>
+        <article v-for="feature in features" :key="feature.title">
+          <span class="feature-icon" aria-hidden="true">{{ feature.icon }}</span>
+          <h3>{{ feature.title }}</h3>
+          <p>{{ feature.description }}</p>
         </article>
       </div>
+
+      <section class="journey-guide" aria-labelledby="journey-guide-title">
+        <div>
+          <p class="section-label">TRAVEL COMPARE</p>
+          <h2 id="journey-guide-title">출발할 때와 도착했을 때,<br />무엇이 달라질까요?</h2>
+        </div>
+        <ol>
+          <li><b>01</b><span>지도에서 출발 도시와 도착 도시를 선택합니다.</span></li>
+          <li><b>02</b><span>출발·도착 날짜와 시간을 시간 단위로 지정합니다.</span></li>
+          <li><b>03</b><span>기온과 강수확률 차이, 여행 준비 코멘트를 확인합니다.</span></li>
+        </ol>
+      </section>
 
       <aside class="data-note">
         <div>
@@ -53,16 +79,19 @@ import BaseSurface from '../components/BaseSurface.vue'
           <div>
             <h2>데이터 안내</h2>
             <p>
-              현재 표시되는 기상 정보는 Vue 컴포넌트와 반응형 데이터 흐름을 학습하기 위한 예시
-              데이터입니다.
+              현재 날씨와 5일 예보는 OpenWeatherMap 데이터를 사용합니다. 예보는 3시간 간격이므로
+              선택한 시간과 가장 가까운 예보 시각을 기준으로 표시됩니다.
             </p>
           </div>
         </div>
-        <a href="/">날씨 보러 가기 <span aria-hidden="true">→</span></a>
+        <div class="note-links">
+          <RouterLink to="/">오늘 날씨 <span aria-hidden="true">→</span></RouterLink>
+          <RouterLink to="/trip">여행 비교 <span aria-hidden="true">→</span></RouterLink>
+        </div>
       </aside>
     </BaseSurface>
 
-    <template #footer>오늘의 날씨 · 일상을 위한 간결한 날씨 정보</template>
+    <template #footer>온도착 · 출발부터 도착까지 이어지는 날씨 정보</template>
   </BasePageLayout>
 </template>
 
@@ -171,7 +200,7 @@ h1 {
 
 .feature-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: 16px;
   margin-top: 44px;
 }
@@ -206,6 +235,25 @@ h1 {
   font-size: 12px;
   line-height: 1.75;
 }
+
+.journey-guide {
+  display: grid;
+  grid-template-columns: 0.9fr 1.1fr;
+  gap: 48px;
+  align-items: center;
+  margin-top: 18px;
+  padding: 34px;
+  color: #fff;
+  background: linear-gradient(135deg, #367fd5, #61b4df);
+  border-radius: 22px;
+}
+
+.journey-guide .section-label { color: rgba(255, 255, 255, 0.68); }
+.journey-guide h2 { margin: 0; font-size: clamp(22px, 3vw, 31px); line-height: 1.4; letter-spacing: -0.04em; }
+.journey-guide ol { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+.journey-guide li { display: grid; grid-template-columns: 34px 1fr; align-items: center; gap: 11px; padding: 12px 14px; background: rgba(255, 255, 255, 0.12); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 12px; }
+.journey-guide li b { color: #ffe3a7; font-size: 10px; }
+.journey-guide li span { font-size: 11px; line-height: 1.5; }
 
 .data-note {
   display: flex;
@@ -250,10 +298,10 @@ h1 {
   line-height: 1.65;
 }
 
-.data-note a {
+.note-links { display: flex; flex: 0 0 auto; gap: 18px; }
+.note-links a {
   display: flex;
-  flex: 0 0 auto;
-  gap: 16px;
+  gap: 8px;
   color: #397fd2;
   font-size: 12px;
   font-weight: 800;
@@ -273,6 +321,8 @@ h1 {
   .feature-grid {
     grid-template-columns: 1fr;
   }
+
+  .journey-guide { grid-template-columns: 1fr; gap: 24px; }
 }
 
 @media (max-width: 580px) {
@@ -300,5 +350,7 @@ h1 {
   .data-note {
     flex-direction: column;
   }
+
+  .note-links { width: 100%; justify-content: space-between; }
 }
 </style>

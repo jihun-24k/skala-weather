@@ -1,4 +1,6 @@
-# skala-weather
+# 온도착 (Ondochak)
+
+현재 위치와 주요 도시의 날씨를 확인하고, 출발 시각과 도착 시각의 날씨 차이를 비교하는 Vue 기반 날씨 서비스입니다.
 
 This template should help get you started developing with Vue 3 in Vite.
 

@@ -19,9 +19,9 @@ const showCurrentLocationWeather = async () => {
 
 <template>
   <header class="app-header">
-    <RouterLink class="brand" to="/" aria-label="오늘의 날씨 홈">
+    <RouterLink class="brand" to="/" aria-label="온도착 홈">
       <span class="brand-icon" aria-hidden="true">☁</span>
-      <span>오늘의 날씨</span>
+      <span>온도착</span>
     </RouterLink>
 
     <div class="header-actions">
@@ -37,6 +37,7 @@ const showCurrentLocationWeather = async () => {
 
       <nav aria-label="주요 메뉴">
         <RouterLink to="/">Home</RouterLink>
+        <RouterLink to="/trip">Travel</RouterLink>
         <RouterLink to="/about">About</RouterLink>
       </nav>
     </div>

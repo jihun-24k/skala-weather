@@ -10,6 +10,11 @@ const router = createRouter({
       component: WeatherHomeView,
     },
     {
+      path: '/trip',
+      name: 'trip',
+      component: () => import('../views/WeatherTripView.vue'),
+    },
+    {
       path: '/about',
       name: 'about',
       component: () => import('../views/WeatherAboutView.vue'),

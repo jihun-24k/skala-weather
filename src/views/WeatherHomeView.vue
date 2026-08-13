@@ -73,7 +73,7 @@ const searchCity = () => {
         <div v-else class="empty-state">
           <span>🌤️</span>
           <h3>검색 결과가 없어요</h3>
-          <p>전국 주요 도시 30곳 중에서 다시 검색해 보세요.</p>
+          <p>전국 주요 도시 {{ weatherList.length }}곳 중에서 다시 검색해 보세요.</p>
           <button type="button" @click="searchQuery = ''">전체 도시 보기</button>
         </div>
       </BaseSurface>
