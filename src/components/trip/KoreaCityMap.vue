@@ -23,7 +23,6 @@ const props = defineProps({
 
 const hoveredProvinceName = ref(null)
 const hoveredCityId = ref(null)
-const activeProvinceName = ref(null)
 let provinceCloseTimer
 let cityOpenTimer
 let cityCloseTimer
@@ -61,7 +60,7 @@ const selectedCities = computed(() =>
     .map((cityId) => mapCities.value.find((city) => city.id === cityId))
     .filter(Boolean),
 )
-const displayedProvinceName = computed(() => activeProvinceName.value ?? hoveredProvinceName.value)
+const displayedProvinceName = computed(() => hoveredProvinceName.value)
 const displayedProvince = computed(() =>
   provinceBoundaryPaths.find((province) => province.name === displayedProvinceName.value),
 )
@@ -128,6 +127,14 @@ const toggleCity = (cityId) => {
   }
 }
 
+const selectCity = (event, cityId) => {
+  toggleCity(cityId)
+  window.clearTimeout(cityOpenTimer)
+  window.clearTimeout(cityCloseTimer)
+  hoveredCityId.value = null
+  event.currentTarget?.blur()
+}
+
 const showCityPreview = (cityId, delay = 200) => {
   window.clearTimeout(cityOpenTimer)
   window.clearTimeout(cityCloseTimer)
@@ -162,11 +169,6 @@ const scheduleProvinceClose = () => {
     hoveredProvinceName.value = null
     hoveredCityId.value = null
   }, 260)
-}
-
-const toggleProvince = (provinceName) => {
-  const provinceGroup = getProvinceGroup(provinceName)
-  activeProvinceName.value = activeProvinceName.value === provinceGroup ? null : provinceGroup
 }
 
 onBeforeUnmount(() => {
@@ -225,7 +227,7 @@ onBeforeUnmount(() => {
             @mouseleave="scheduleProvinceClose"
             @focus="showProvince(province.name)"
             @blur="scheduleProvinceClose"
-            @click="toggleProvince(province.name)"
+            @mousedown.prevent
           >
             <title>{{ province.name }}</title>
           </path>
@@ -279,7 +281,7 @@ onBeforeUnmount(() => {
               @mouseleave="scheduleCityPreviewClose"
               @focus="showCityPreview(city.id, 0)"
               @blur="scheduleCityPreviewClose"
-              @click.stop="toggleCity(city.id)"
+              @click.stop="selectCity($event, city.id)"
               @keydown.enter="toggleCity(city.id)"
               @keydown.space.prevent="toggleCity(city.id)"
             />
@@ -301,7 +303,7 @@ onBeforeUnmount(() => {
               @mouseleave="scheduleCityPreviewClose"
               @focus="showCityPreview(city.id, 0)"
               @blur="scheduleCityPreviewClose"
-              @click.stop="toggleCity(city.id)"
+              @click.stop="selectCity($event, city.id)"
               @keydown.enter="toggleCity(city.id)"
               @keydown.space.prevent="toggleCity(city.id)"
             >
