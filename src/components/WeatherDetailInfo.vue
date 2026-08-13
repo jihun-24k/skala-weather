@@ -1,5 +1,6 @@
 <script setup>
 import { computed } from 'vue'
+import HourlyWeatherForecast from './HourlyWeatherForecast.vue'
 
 const props = defineProps({
   selectedCityInfo: {
@@ -84,7 +85,13 @@ const clothingRecommendation = computed(() => {
 })
 </script>
 <template>
-  <section class="hero" aria-labelledby="current-weather-title">
+  <section
+    class="hero"
+    :data-weather="selectedCityInfo.weatherType ?? 'unknown'"
+    aria-labelledby="current-weather-title"
+  >
+    <div class="weather-decoration" aria-hidden="true" />
+
     <div class="hero-copy">
       <p class="eyebrow">대한민국 · 현재 날씨</p>
       <div class="location-line">
@@ -144,11 +151,21 @@ const clothingRecommendation = computed(() => {
         <p>{{ clothingRecommendation.description }}</p>
       </div>
     </div>
+
+    <HourlyWeatherForecast :forecasts="selectedCityInfo.hourlyForecast" />
   </section>
 </template>
 
 <style scoped>
 .hero {
+  --hero-start: rgba(22, 107, 225, 0.94);
+  --hero-end: rgba(64, 161, 244, 0.85);
+  --hero-glow: #b8e9ff;
+  --hero-accent: #9fe1ff;
+  --hero-panel: rgba(255, 255, 255, 0.13);
+  --hero-panel-strong: rgba(255, 255, 255, 0.16);
+  --hero-border: rgba(255, 255, 255, 0.22);
+  --hero-shadow: rgba(18, 79, 151, 0.22);
   position: relative;
   display: grid;
   grid-template-columns: 1fr 320px;
@@ -159,11 +176,70 @@ const clothingRecommendation = computed(() => {
   overflow: hidden;
   color: #fff;
   background:
-    linear-gradient(135deg, rgba(22, 107, 225, 0.94), rgba(64, 161, 244, 0.85)),
-    radial-gradient(circle at 72% 18%, #b8e9ff 0, transparent 33%);
+    linear-gradient(135deg, var(--hero-start), var(--hero-end)),
+    radial-gradient(circle at 72% 18%, var(--hero-glow) 0, transparent 33%);
   border: 1px solid rgba(255, 255, 255, 0.36);
   border-radius: 32px;
-  box-shadow: 0 28px 70px rgba(18, 79, 151, 0.22);
+  box-shadow: 0 28px 70px var(--hero-shadow);
+  transition: background 0.7s ease, box-shadow 0.7s ease;
+}
+
+.hero[data-weather='sunny'] {
+  --hero-start: rgba(24, 142, 225, 0.96);
+  --hero-end: rgba(82, 189, 242, 0.88);
+  --hero-glow: #fff29b;
+  --hero-accent: #fff08a;
+  --hero-panel: rgba(255, 250, 210, 0.15);
+  --hero-panel-strong: rgba(255, 248, 195, 0.19);
+  --hero-shadow: rgba(21, 111, 180, 0.28);
+}
+
+.hero[data-weather='cloudy'] {
+  --hero-start: rgba(83, 111, 132, 0.96);
+  --hero-end: rgba(135, 158, 174, 0.9);
+  --hero-glow: #dce9ef;
+  --hero-accent: #e6f0f4;
+  --hero-shadow: rgba(45, 66, 82, 0.27);
+}
+
+.hero[data-weather='rain'] {
+  --hero-start: rgba(30, 54, 77, 0.97);
+  --hero-end: rgba(72, 105, 131, 0.92);
+  --hero-glow: #8ec8e8;
+  --hero-accent: #a8ddfa;
+  --hero-panel: rgba(176, 215, 239, 0.11);
+  --hero-panel-strong: rgba(176, 215, 239, 0.15);
+  --hero-shadow: rgba(17, 35, 51, 0.35);
+}
+
+.hero[data-weather='thunder'] {
+  --hero-start: rgba(24, 29, 51, 0.98);
+  --hero-end: rgba(67, 69, 108, 0.94);
+  --hero-glow: #d8d0ff;
+  --hero-accent: #ddd6ff;
+  --hero-panel: rgba(201, 194, 239, 0.1);
+  --hero-panel-strong: rgba(201, 194, 239, 0.14);
+  --hero-shadow: rgba(12, 16, 31, 0.42);
+}
+
+.hero[data-weather='snow'] {
+  --hero-start: rgba(91, 132, 159, 0.96);
+  --hero-end: rgba(170, 204, 222, 0.92);
+  --hero-glow: #f7fdff;
+  --hero-accent: #fff;
+  --hero-panel: rgba(255, 255, 255, 0.18);
+  --hero-panel-strong: rgba(255, 255, 255, 0.22);
+  --hero-shadow: rgba(65, 103, 128, 0.28);
+}
+
+.hero[data-weather='fog'] {
+  --hero-start: rgba(93, 113, 121, 0.96);
+  --hero-end: rgba(165, 180, 184, 0.92);
+  --hero-glow: #edf3f4;
+  --hero-accent: #eef5f6;
+  --hero-panel: rgba(244, 248, 249, 0.11);
+  --hero-panel-strong: rgba(244, 248, 249, 0.15);
+  --hero-shadow: rgba(51, 67, 72, 0.28);
 }
 
 .hero::before,
@@ -172,6 +248,46 @@ const clothingRecommendation = computed(() => {
   content: '';
   background: rgba(255, 255, 255, 0.09);
   border-radius: 50%;
+}
+
+.weather-decoration {
+  position: absolute;
+  inset: 0;
+  opacity: 0.72;
+  pointer-events: none;
+  transition: opacity 0.7s ease;
+}
+
+.hero[data-weather='sunny'] .weather-decoration {
+  background: radial-gradient(circle at 86% 10%, rgba(255, 244, 143, 0.68), transparent 25%);
+}
+
+.hero[data-weather='cloudy'] .weather-decoration {
+  background:
+    radial-gradient(ellipse at 90% 26%, rgba(244, 249, 251, 0.22) 0 13%, transparent 14%),
+    radial-gradient(ellipse at 73% 12%, rgba(244, 249, 251, 0.16) 0 17%, transparent 18%);
+}
+
+.hero[data-weather='rain'] .weather-decoration,
+.hero[data-weather='thunder'] .weather-decoration {
+  background: repeating-linear-gradient(105deg, transparent 0 26px, rgba(190, 225, 255, 0.14) 27px 29px, transparent 30px 54px);
+}
+
+.hero[data-weather='thunder'] .weather-decoration {
+  filter: drop-shadow(0 0 24px rgba(220, 213, 255, 0.4));
+}
+
+.hero[data-weather='snow'] .weather-decoration {
+  background-image:
+    radial-gradient(circle, rgba(255, 255, 255, 0.75) 0 3px, transparent 4px),
+    radial-gradient(circle, rgba(255, 255, 255, 0.46) 0 5px, transparent 6px);
+  background-position: 20px 30px, 100px 70px;
+  background-size: 120px 120px, 170px 170px;
+}
+
+.hero[data-weather='fog'] .weather-decoration {
+  background: repeating-linear-gradient(0deg, transparent 0 45px, rgba(244, 249, 250, 0.16) 55px 85px, transparent 95px 140px);
+  filter: blur(12px);
 }
 
 .hero::before {
@@ -190,7 +306,8 @@ const clothingRecommendation = computed(() => {
 
 .hero-copy,
 .weather-side,
-.clothing-recommendation {
+.clothing-recommendation,
+.hourly-forecast {
   position: relative;
   z-index: 1;
 }
@@ -226,7 +343,7 @@ h1 {
 }
 
 .location-pin {
-  color: #9fe1ff;
+  color: var(--hero-accent);
   font-size: 10px;
   box-shadow: 0 0 18px #fff;
 }
@@ -276,8 +393,8 @@ sup {
   align-items: center;
   gap: 14px;
   padding: 16px 18px;
-  background: rgba(255, 255, 255, 0.13);
-  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: var(--hero-panel);
+  border: 1px solid var(--hero-border);
   border-radius: 16px;
   backdrop-filter: blur(8px);
 }
@@ -314,8 +431,8 @@ sup {
   gap: 28px;
   margin-top: 4px;
   padding: 24px 28px;
-  background: rgba(255, 255, 255, 0.16);
-  border: 1px solid rgba(255, 255, 255, 0.22);
+  background: var(--hero-panel-strong);
+  border: 1px solid var(--hero-border);
   border-radius: 16px;
   backdrop-filter: blur(8px);
 }

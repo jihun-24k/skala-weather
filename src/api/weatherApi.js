@@ -22,8 +22,8 @@ export const getCurrentWeather = async ({ latitude, longitude }) => {
   return response.data
 }
 
-// 현재 기준 3시간 단위의 강수량 들고오기
-// UTC 기준으로 강수량을 조회한다
+// 현재 기준 3시간 단위의 정보를 들고오기
+// UTC 기준으로 정보를 조회한다
 export const getWeatherForecast = async ({
   latitude,
   longitude,

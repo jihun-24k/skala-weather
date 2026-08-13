@@ -10,6 +10,8 @@
 
 <style scoped>
 .page-layout {
+  position: relative;
+  z-index: 1;
   width: min(1120px, calc(100% - 40px));
   margin: 0 auto;
   padding: 0 0 32px;
