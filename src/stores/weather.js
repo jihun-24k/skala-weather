@@ -15,6 +15,7 @@ const koreanDateFormatter = new Intl.DateTimeFormat('en-CA', {
 
 const getKoreanDate = (timestamp) => koreanDateFormatter.format(new Date(timestamp * 1000))
 
+// 현재 위치를 받아오기
 const getCurrentLocationName = (apiCityName) => {
     if (!apiCityName) return '현재 위치'
 
@@ -102,6 +103,8 @@ export const useWeatherStore = defineStore('weather', () => {
 
         const weatherId = currentData.weather[0]?.id
         const weatherType = getWeatherType(weatherId)
+
+        // 3시간 단위로 24시간 날씨 예측 데이터 전처리
         const next24Hours = currentTime + 24 * 60 * 60 * 1000
         const hourlyForecast = [
             {
@@ -163,7 +166,9 @@ export const useWeatherStore = defineStore('weather', () => {
         try {
             weatherList.value = await Promise.all(initialCities.map((city) => fetchCityWeather(city)))
 
-            selectCity(weatherList.value[0])
+            if (!selectedCityInfo.value) {
+                selectCity(weatherList.value[0])
+            }
         } catch (requestError) {
             error.value = getRequestErrorMessage(requestError)
         } finally {
@@ -171,6 +176,7 @@ export const useWeatherStore = defineStore('weather', () => {
         }
     }
 
+    // 현재 위치를 가져와서 actions
     const fetchCurrentLocationWeather = async () => {
         isLocating.value = true
         locationError.value = null

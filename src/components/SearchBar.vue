@@ -1,13 +1,6 @@
 <script setup>
 const searchQuery = defineModel({ type: String, required: true })
-defineProps({
-  isLocating: {
-    type: Boolean,
-    default: false,
-  },
-})
-
-const emit = defineEmits(['search', 'locate'])
+const emit = defineEmits(['search'])
 </script>
 
 <template>
@@ -16,31 +9,19 @@ const emit = defineEmits(['search', 'locate'])
       <p class="section-label">WEATHER AROUND YOU</p>
       <h2 id="city-weather-title">다른 지역 날씨</h2>
     </div>
-    <div class="search-actions">
-      <button
-        class="location-button"
-        type="button"
-        :disabled="isLocating"
-        @click="emit('locate')"
-      >
-        <span aria-hidden="true">⌖</span>
-        {{ isLocating ? '위치 확인 중' : '현재 위치' }}
+    <label class="search-box">
+      <span aria-hidden="true">⌕</span>
+      <input
+        v-model="searchQuery"
+        type="search"
+        placeholder="도시 이름을 검색해 보세요"
+        aria-label="도시 검색"
+        @keyup.enter="emit('search')"
+      />
+      <button v-if="searchQuery" type="button" aria-label="검색어 지우기" @click="searchQuery = ''">
+        ×
       </button>
-
-      <label class="search-box">
-        <span aria-hidden="true">⌕</span>
-        <input
-          v-model="searchQuery"
-          type="search"
-          placeholder="도시 이름을 검색해 보세요"
-          aria-label="도시 검색"
-          @keyup.enter="emit('search')"
-        />
-        <button v-if="searchQuery" type="button" aria-label="검색어 지우기" @click="searchQuery = ''">
-          ×
-        </button>
-      </label>
-    </div>
+    </label>
   </div>
 </template>
 
@@ -78,42 +59,6 @@ h2 {
   border: 1px solid #e3ebf5;
   border-radius: 14px;
   transition: 0.2s ease;
-}
-
-.search-actions {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 10px;
-  width: min(570px, 100%);
-}
-
-.location-button {
-  flex: none;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  min-height: 48px;
-  padding: 0 15px;
-  color: #3978ce;
-  background: #eef5fd;
-  border: 1px solid #d8e7f8;
-  border-radius: 14px;
-  font-size: 13px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: 0.2s ease;
-}
-
-.location-button:hover:not(:disabled) {
-  color: #fff;
-  background: #3f86dc;
-  border-color: #3f86dc;
-}
-
-.location-button:disabled {
-  cursor: wait;
-  opacity: 0.62;
 }
 
 .search-box:focus-within {
@@ -158,14 +103,5 @@ h2 {
     width: auto;
   }
 
-  .search-actions {
-    align-items: stretch;
-    flex-direction: column;
-    width: 100%;
-  }
-
-  .location-button {
-    justify-content: center;
-  }
 }
 </style>

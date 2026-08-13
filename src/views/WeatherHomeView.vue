@@ -12,18 +12,19 @@ import { useWeatherStore } from '../stores/weather'
 const weatherStore = useWeatherStore()
 
 const {
+  weatherList,
   searchQuery,
   selectedCityInfo,
   filteredWeatherList,
   averageTemp,
   isLoading,
-  isLocating,
   error,
-  locationError,
 } = storeToRefs(weatherStore)
 
 onMounted(() => {
-  weatherStore.fetchWeatherList()
+  if (!weatherList.value.length) {
+    weatherStore.fetchWeatherList()
+  }
 })
 
 const showDetail = (weather) => {
@@ -57,14 +58,7 @@ const searchCity = () => {
       <WeatherDetailInfo :selected-city-info="selectedCityInfo" />
 
       <BaseSurface class="content" aria-labelledby="city-weather-title">
-        <SearchBar
-          v-model="searchQuery"
-          :is-locating="isLocating"
-          @search="searchCity"
-          @locate="weatherStore.fetchCurrentLocationWeather()"
-        />
-
-        <p v-if="locationError" class="location-error" role="alert">{{ locationError }}</p>
+        <SearchBar v-model="searchQuery" @search="searchCity" />
 
         <div class="summary-row">
           <span>전국 주요 도시</span>
@@ -129,16 +123,6 @@ const searchCity = () => {
   justify-content: space-between;
   margin: 30px 0 14px;
   color: #8492a5;
-  font-size: 12px;
-}
-
-.location-error {
-  margin: 14px 0 0;
-  padding: 10px 13px;
-  color: #a13b3b;
-  background: #fff2f2;
-  border: 1px solid #f4d3d3;
-  border-radius: 10px;
   font-size: 12px;
 }
 
